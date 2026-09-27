@@ -1,0 +1,137 @@
+<router-outlet></router-outlet>
+<div class="bg-base-200 min-h-screen flex justify-center items-start pt-6 px-6 pb-12">
+    <div class="w-full max-w-5xl">
+
+        <!-- Header -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold">Practice</h1>
+            <p class="mt-1 opacity-60">
+                Pick an exercise and put your knowledge to work!
+            </p>
+        </div>
+
+        <!-- NOTE READING -->
+        <section class="mb-8">
+            <div class="mb-3">
+                <h2 class="text-xl font-bold">Note Reading</h2>
+                <p class="text-sm opacity-60">
+                    Practice identifying notes on the staff.
+                </p>
+            </div>
+
+            <ul class="list">
+                <app-exercise-card title="Note Identification" difficulty="BEGINNER" time="3-5 min"
+                    description="Identify notes on the staff" icon="♩" route="note-id"
+                    (start)="startExercise($event)" />
+
+                <app-exercise-card title="Staff Match" difficulty="Beginner" time="5 min"
+                    description="Match notes on the staff with their corresponding letter names." icon="🎼"
+                    route="note-id" />
+            </ul>
+        </section>
+
+        <!-- RHYTHM & METER -->
+        <section class="mb-8">
+
+            <div class="mb-3">
+                <h2 class="text-xl font-bold">Rhythm & Meter</h2>
+                <p class="text-sm opacity-60">
+                    Practice reading, counting, and recognizing rhythms.
+                </p>
+            </div>
+
+            <ul class="list">
+                <app-exercise-card title="Rhythm Builder" difficulty="Beginner" time="5 min"
+                    description="Build complete measures using different notes and rests." icon="♫" route="note-id" />
+            </ul>
+        </section>
+
+
+        <!-- KEY SIGNATURES -->
+        <section class="mb-8">
+
+            <div class="mb-3">
+                <h2 class="text-xl font-bold">Key Signatures</h2>
+                <p class="text-sm opacity-60">
+                    Learn to recognize keys and their sharps and flats.
+                </p>
+            </div>
+
+            <ul class="list">
+                <app-exercise-card title="Key Signature Sprint" difficulty="Beginner" time="Timed"
+                    description="Identify as many key signatures as you can before time runs out." icon="☆"
+                    route="note-id" />
+            </ul>
+        </section>
+
+
+        <!-- SCALES -->
+        <section class="mb-8">
+
+            <div class="mb-3">
+                <h2 class="text-xl font-bold">Scales</h2>
+                <p class="text-sm opacity-60">
+                    Build and identify major and minor scales.
+                </p>
+            </div>
+
+            <ul class="list">
+                <app-exercise-card title="Scale Builder" difficulty="Intermediate" time="5 min"
+                    description="Build major scales using the correct whole-step and half-step pattern." icon="☆"
+                    route="note-id" />
+            </ul>
+        </section>
+
+
+        <!-- ACCIDENTALS & ENHARMONICS -->
+        <section class="mb-8">
+
+            <div class="mb-3">
+                <h2 class="text-xl font-bold">Accidentals & Enharmonics</h2>
+                <p class="text-sm opacity-60">
+                    Practice sharps, flats, naturals, and enharmonic equivalents.
+                </p>
+            </div>
+
+            <ul class="list bg-base-100">
+                <app-exercise-card title="Enharmonic Match" difficulty="Beginner" time="3-5 min"
+                    description="Find notes that sound the same but are written differently." icon="☆"
+                    route="note-id" />
+            </ul>
+        </section>
+
+
+        <!-- INTERVALS -->
+        <section class="mb-8">
+
+            <div class="mb-3">
+                <h2 class="text-xl font-bold">Intervals</h2>
+                <p class="text-sm opacity-60">
+                    Practice identifying the distance between notes.
+                </p>
+            </div>
+
+            <ul class="list bg-base-100 rounded-box shadow-md">
+                <app-exercise-card title="Interval Identifier" difficulty="Beginner" time="5 min"
+                    description="Identify the size of the interval between two notes." icon="☆" route="note-id" />
+            </ul>
+        </section>
+    </div>
+</div>
+
+@if (showStartAnimation) {
+<div class="practice-start-overlay">
+    <div class="practice-start-content">
+
+        <div class="flex text-6xl justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-12">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z" />
+            </svg>  
+        </div>
+
+        <h1 class="text-5xl font-bold">
+            Let's go!
+        </h1>
+    </div>
+</div>
+}
