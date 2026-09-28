@@ -1,6 +1,171 @@
+<h1 class="text-center text-4xl p-5">Note Identification</h1>
 
-<h1 class="text-center text-4xl">Note Identification</h1>
+
+<div class="m-auto w-full max-w-2xl px-4">
+
+    <div class="card card-border border-2 bg-base-100 rounded-lg shadow-md">
+
+        <div class="card-body gap-6">
+
+            <!-- Header -->
+            <div>
+                <h2 class="card-title text-2xl">
+                    Customize Your Practice
+                </h2>
+
+                <p class="text-base-content/60 mt-1">
+                    Choose how you'd like to practice note identification.
+                </p>
+            </div>
+
+            <!-- Accidentals -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-medium">Accidentals</span>
+                </label>
+
+                <select class="select select-bordered w-full cursor-pointer">
+                    <option selected>Flats & Sharps</option>
+                    <option>Flats</option>
+                    <option>Sharps</option>
+                    <option>None</option>
+                </select>
+            </div>
 
 
+            <!-- Note Range -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-medium">Note Range</span>
+                </label>
+
+                <select class="select select-bordered w-full cursor-pointer">
+                    <option selected>Middle C – High C</option>
+                    <option>Low G – Middle C</option>
+                    <option>Middle C – High C</option>
+                    <option>Low G – High G</option>
+                </select>
+            </div>
+
+            <!-- Number of Questions -->
+            <div class="form-control">
+
+                <div class="flex justify-between items-center mb-2">
+                    <label class="label">
+                        <span class="label-text font-medium">
+                            Number of Questions
+                        </span>
+                    </label>
+
+                    <span class="font-semibold">
+                        10
+                    </span>
+                </div>
+
+                <input type="range" min="5" max="30" value="10" step="5" class="range" />
+
+                <div class="flex justify-between text-xs text-base-content/50 mt-1">
+                    <span>5</span>
+                    <span>30</span>
+                </div>
+            </div>
+
+            <!-- Clefs -->
+            <div class="form-control">
+
+                <label class="label">
+                    <span class="label-text font-medium">
+                        Clefs
+                    </span>
+                </label>
+
+                <p class="text-sm text-base-content/60 mb-3">
+                    Choose one or more clefs to practice.
+                </p>
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <!-- Treble -->
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+
+                        <input type="checkbox" class="checkbox checkbox-primary" checked />
+
+                        <div>
+                            <p class="font-medium">Treble</p>
+                            <p class="text-xs text-base-content/60">
+                                G Clef
+                            </p>
+                        </div>
+
+                    </label>
+
+
+                    <!-- Bass -->
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+
+                        <input type="checkbox" class="checkbox checkbox-primary" />
+
+                        <div>
+                            <p class="font-medium">Bass</p>
+                            <p class="text-xs text-base-content/60">
+                                F Clef
+                            </p>
+                        </div>
+
+                    </label>
+
+
+                    <!-- Alto -->
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+
+                        <input type="checkbox" class="checkbox checkbox-primary" />
+
+                        <div>
+                            <p class="font-medium">Alto</p>
+                            <p class="text-xs text-base-content/60">
+                                C Clef
+                            </p>
+                        </div>
+
+                    </label>
+
+
+                    <!-- Tenor -->
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+
+                        <input type="checkbox" class="checkbox checkbox-primary" />
+
+                        <div>
+                            <p class="font-medium">Tenor</p>
+                            <p class="text-xs text-base-content/60">
+                                C Clef
+                            </p>
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- Divider -->
+            <div class="divider my-1"></div>
+
+
+            <!-- Start Button -->
+            <button class="btn btn-primary w-full">
+                Start Practice
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <app-staff></app-staff>
