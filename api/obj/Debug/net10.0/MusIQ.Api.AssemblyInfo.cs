@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MusIQ.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f65946f620731580bb8e8833d2cc78548b8449c0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b35720cd2a70a3da6d2445a1ea6652d5594804ea")]
 [assembly: System.Reflection.AssemblyProductAttribute("MusIQ.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MusIQ.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
