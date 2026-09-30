@@ -2,7 +2,8 @@ import {
   Component,
   ElementRef,
   ViewChild,
-  afterNextRender
+  afterNextRender,
+  input
 } from '@angular/core';
 
 import {
@@ -14,14 +15,20 @@ import {
 } from 'vexflow';
 
 @Component({
-  selector: 'app-staff',
-  templateUrl: './staff.html',
-  styleUrl: './staff.css'
+  selector: 'app-note-id-staff',
+  templateUrl: './note-id-staff.html',
+  styleUrl: './note-id-staff.css'
 })
-export class Staff {
 
+/**
+ * Render a staff for note identification using vexflow
+ */
+export class NoteIdStaff {
   @ViewChild('staffContainer', { static: true })
   staffContainer!: ElementRef<HTMLDivElement>;
+
+  
+  // noteName = input.required<string>();
 
   constructor() {
     afterNextRender(() => {

@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { Staff } from '../../shared/staff/staff';
+import { NoteIdStaff } from './staff/note-id-staff';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ExerciseConfig, NoteRandomizerService } from '../../services/note-generator.service';
+import { Accidental, Note, Octave } from '../../shared/music/music.types';
 
 @Component({
-  imports: [Staff, ReactiveFormsModule],
+  imports: [NoteIdStaff, ReactiveFormsModule],
   selector: 'app-note-id',
   styleUrl: './note-id.css',
   templateUrl: './note-id.html',
@@ -11,6 +13,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 export class NoteId {
 
   isCustomize = true;
+  currentNote?: Note;
 
   customizeForm = new FormGroup({
     treble: new FormControl(true),
@@ -23,8 +26,19 @@ export class NoteId {
     unlimited: new FormControl(false)
   });
 
+  exerciseConfig: ExerciseConfig = {
+    allowedAccidentals: [Accidental.Sharp, Accidental.Flat, Accidental.Natural],
+    allowedOctaves: [4, 5] as Octave[]
+  };
+
+  constructor(private randomizerService: NoteRandomizerService) {}
+
   startPractice() {
     console.log(this.customizeForm.value);
+
+    this.currentNote = this.randomizerService.generateRandomNote(this.exerciseConfig);
+    console.log('Generated Random Note:', this.currentNote);
+
     this.isCustomize = false;
   }
 }
