@@ -37,8 +37,14 @@ export class NoteId {
     console.log(this.customizeForm.value);
 
     this.currentNote = this.randomizerService.generateRandomNote(this.exerciseConfig);
+
     console.log('Generated Random Note:', this.currentNote);
 
     this.isCustomize = false;
+  }
+
+  nextQuestion() {
+    this.currentNote = this.randomizerService.generateRandomNote(this.exerciseConfig);
+    console.log("new note:", this.currentNote)
   }
 }

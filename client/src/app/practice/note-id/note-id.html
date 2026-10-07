@@ -132,5 +132,17 @@
         </div>
     </form>
 } @else {
-    <app-note-id-staff></app-note-id-staff>
+    <div class="card card-border border-2 bg-base-100">
+        <div class="card-body">
+            @if (currentNote) {
+                <app-note-id-staff [note]="currentNote"></app-note-id-staff>
+            }
+            <button
+                class="btn btn-accent btn-sm relative z-10"
+                (click)="nextQuestion()">
+                Next
+            </button>
+        </div>
+    </div>
+
 }
