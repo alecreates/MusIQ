@@ -1,0 +1,6 @@
+.staff-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    transform-origin: center;
+}

@@ -1,148 +1,190 @@
 <h1 class="text-center text-4xl p-5">Note Identification</h1>
 
 @if (isCustomize) {
-    <form [formGroup]="customizeForm" (ngSubmit)="startPractice()">
-        <div class="m-auto w-full max-w-2xl px-4">
-            <div class="card card-border border-2 bg-base-100 rounded-lg shadow-md">
-                <div class="card-body gap-6">
-    
-                    <!-- Header -->
-                    <div>
-                        <h2 class="card-title text-2xl">
-                            Customize Your Practice
-                        </h2>
-                        <p class="text-base-content/60 mt-1">
-                            Choose how you'd like to practice note identification.
-                        </p>
-                    </div>
-    
-                    <!-- Accidentals -->
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text font-medium">Accidentals</span>
-                        </label>
-    
-                        <select class="select select-bordered w-full cursor-pointer"
-                        formControlName="accidentals">
-                            <option value="both">Flats & Sharps</option>
-                            <option value="flats">Flats</option>
-                            <option value="sharps">Sharps</option>
-                            <option value="none">None</option>
-                        </select>
-                    </div>
-    
-                    <!-- Note Range -->
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text font-medium">Note Range</span>
-                        </label>
-    
-                        <select class="select select-bordered w-full cursor-pointer"
-                        formControlName="noteRange">
-                            <option value="C4-C5">C4 - C5</option>
-                            <option value="G3-C4">G3 - C4</option>
-                            <option value="C4-G5">C4 - G5</option>
-                            <option value="G3-G5">G3 - G5</option>
-                        </select>
-                    </div>
-    
-                    <!-- Clefs -->
-                    <div class="form-control">
-    
-                        <label class="label">
-                            <span class="label-text font-medium">
-                                Clefs
-                            </span>
-                        </label>
-    
-                        <p class="text-sm text-base-content/60 mb-3">
-                            Choose one or more clefs to practice.
-                        </p>
-    
-                        <div class="grid grid-cols-2 gap-3">
-    
-                            <!-- Treble -->
-                            <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
-                          hover:bg-base-200 transition-colors">
-                                <input type="checkbox" class="checkbox checkbox-primary" checked formControlName="treble"/>
-                                <div>
-                                    <p class="font-medium">Treble</p>
-                                </div>
-                            </label>
-    
-                            <!-- Bass -->
-                            <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
-                          hover:bg-base-200 transition-colors">
-                                <input type="checkbox" class="checkbox checkbox-primary" formControlName="bass"/>
-                                <div>
-                                    <p class="font-medium">Bass</p>
-                                </div>
-                            </label>
-    
-                            <!-- Alto -->
-                            <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
-                          hover:bg-base-200 transition-colors">
-                                <input type="checkbox" class="checkbox checkbox-primary" formControlName="alto"/>
-                                <div>
-                                    <p class="font-medium">Alto</p>
-                                </div>
-                            </label>
-    
-                            <!-- Tenor -->
-                            <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
-                          hover:bg-base-200 transition-colors">
-                                <input type="checkbox" class="checkbox checkbox-primary" formControlName="tenor"/>
-                                <div>
-                                    <p class="font-medium">Tenor</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-    
-                    <!-- Number of Questions -->
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text font-medium">
-                                Number of Questions
-                            </span>
-                        </label>
-    
-                        <div class="flex gap-3 items-center">
-                            <!-- Number input -->
-                            <input min="1" max="100" class="input input-bordered w-full"
-                                placeholder="Number of questions" formControlName="questionCount" />
-    
-                            <!-- Unlimited -->
-                            <label class="label cursor-pointer gap-2 whitespace-nowrap">
-                                <span class="label-text">Unlimited</span>
-                                <input type="checkbox" class="checkbox checkbox-primary" formControlName="unlimited"/>
-                            </label>
-                        </div>
-                    </div>
-    
-                    <!-- Divider -->
-                    <div class="divider my-1"></div>
-    
-                    <!-- Start Button -->
-                    <button class="btn btn-primary w-full">
-                        Start Practice!
-                    </button>
+<form [formGroup]="customizeForm" (ngSubmit)="startPractice()">
+    <div class="m-auto w-full max-w-3xl px-4">
+        <div class="card card-border border-2 bg-base-100 rounded-lg shadow-md">
+            <div class="card-body gap-6">
+
+                <!-- Header -->
+                <div>
+                    <h2 class="card-title text-2xl">
+                        Customize Your Practice
+                    </h2>
+                    <p class="text-base-content/60 mt-1">
+                        Choose how you'd like to practice note identification.
+                    </p>
                 </div>
+
+                <!-- Accidentals -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-medium">Accidentals</span>
+                    </label>
+
+                    <select class="select select-bordered w-full cursor-pointer" formControlName="accidentals">
+                        <option value="both">Flats & Sharps</option>
+                        <option value="flats">Flats</option>
+                        <option value="sharps">Sharps</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+
+                <!-- Note Range -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-medium">Note Range</span>
+                    </label>
+
+                    <select class="select select-bordered w-full cursor-pointer" formControlName="noteRange">
+                        <option value="C4-C5">C4 - C5</option>
+                        <option value="G3-C4">G3 - C4</option>
+                        <option value="C4-G5">C4 - G5</option>
+                        <option value="G3-G5">G3 - G5</option>
+                    </select>
+                </div>
+
+                <!-- Clefs -->
+                <div class="form-control">
+
+                    <label class="label">
+                        <span class="label-text font-medium">
+                            Clefs
+                        </span>
+                    </label>
+
+                    <p class="text-sm text-base-content/60 mb-3">
+                        Choose one or more clefs to practice.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-3">
+
+                        <!-- Treble -->
+                        <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+                            <input type="checkbox" class="checkbox checkbox-primary" checked formControlName="treble" />
+                            <div>
+                                <p class="font-medium">Treble</p>
+                            </div>
+                        </label>
+
+                        <!-- Bass -->
+                        <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+                            <input type="checkbox" class="checkbox checkbox-primary" formControlName="bass" />
+                            <div>
+                                <p class="font-medium">Bass</p>
+                            </div>
+                        </label>
+
+                        <!-- Alto -->
+                        <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+                            <input type="checkbox" class="checkbox checkbox-primary" formControlName="alto" />
+                            <div>
+                                <p class="font-medium">Alto</p>
+                            </div>
+                        </label>
+
+                        <!-- Tenor -->
+                        <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer
+                      hover:bg-base-200 transition-colors">
+                            <input type="checkbox" class="checkbox checkbox-primary" formControlName="tenor" />
+                            <div>
+                                <p class="font-medium">Tenor</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Visual Range Picker-->
+                <div class="form-control gap-3">
+
+                    <label class="label">
+                        <span class="label-text font-medium">Note Ranges</span>
+                    </label>
+
+                    <p class="text-sm text-base-content/60">
+                        Adjust the lowest and highest notes for each clef.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            @if (customizeForm.controls['treble'].value) {
+                            <app-clef-range-picker [clef]="'treble'" [lowerNote]="defaultRanges.treble.lower"
+                                [upperNote]="defaultRanges.treble.upper" (raiseLower)="raiseNote('treble', 'lower')"
+                                (lowerLower)="lowerNote('treble', 'lower')" (raiseUpper)="raiseNote('treble', 'upper')"
+                                (lowerUpper)="lowerNote('treble', 'upper')" />
+                            }
+
+                            @if (customizeForm.controls['bass'].value) {
+                            <app-clef-range-picker [clef]="'bass'" [lowerNote]="defaultRanges.bass.lower"
+                                [upperNote]="defaultRanges.bass.upper" (raiseLower)="raiseNote('bass', 'lower')"
+                                (lowerLower)="lowerNote('bass', 'lower')" (raiseUpper)="raiseNote('bass', 'upper')"
+                                (lowerUpper)="lowerNote('bass', 'upper')" />
+                            }
+
+                            @if (customizeForm.controls['alto'].value) {
+                            <app-clef-range-picker [clef]="'alto'" [lowerNote]="defaultRanges.alto.lower"
+                                [upperNote]="defaultRanges.alto.upper" (raiseLower)="raiseNote('alto', 'lower')"
+                                (lowerLower)="lowerNote('alto', 'lower')" (raiseUpper)="raiseNote('alto', 'upper')"
+                                (lowerUpper)="lowerNote('alto', 'upper')" />
+                            }
+
+                            @if (customizeForm.controls['tenor'].value) {
+                            <app-clef-range-picker [clef]="'tenor'" [lowerNote]="defaultRanges.tenor.lower"
+                                [upperNote]="defaultRanges.tenor.upper" (raiseLower)="raiseNote('tenor', 'lower')"
+                                (lowerLower)="lowerNote('tenor', 'lower')" (raiseUpper)="raiseNote('tenor', 'upper')"
+                                (lowerUpper)="lowerNote('tenor', 'upper')" />
+                            }
+                    </div>
+                </div>
+
+                <!-- Number of Questions -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-medium">
+                            Number of Questions
+                        </span>
+                    </label>
+
+                    <div class="flex gap-3 items-center">
+                        <!-- Number input -->
+                        <input min="1" max="100" class="input input-bordered w-full" placeholder="Number of questions"
+                            formControlName="questionCount" />
+
+                        <!-- Unlimited -->
+                        <label class="label cursor-pointer gap-2 whitespace-nowrap">
+                            <span class="label-text">Unlimited</span>
+                            <input type="checkbox" class="checkbox checkbox-primary" formControlName="unlimited" />
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider my-1"></div>
+
+                <!-- Start Button -->
+                <button class="btn btn-primary w-full">
+                    Start Practice!
+                </button>
             </div>
         </div>
-    </form>
+    </div>
+</form>
 } @else {
+<div class="m-auto w-full max-w-2xl px-4">
     <div class="card card-border border-2 bg-base-100">
         <div class="card-body">
-            @if (currentNote) {
-                <app-note-id-staff [note]="currentNote"></app-note-id-staff>
+            @if (currentNote && currentClef) {
+            <app-note-id-staff [note]="currentNote" [clef]="currentClef">
+            </app-note-id-staff>
             }
-            <button
-                class="btn btn-accent btn-sm relative z-10"
-                (click)="nextQuestion()">
+
+            <button class="btn btn-accent btn-sm relative z-10" (click)="nextQuestion()">
                 Next
             </button>
         </div>
     </div>
+</div>
 
 }

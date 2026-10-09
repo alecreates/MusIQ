@@ -1,6 +1,6 @@
 // note-generator.service.ts
 import { Injectable } from '@angular/core';
-import { Accidental, Octave, Note, NoteName} from '../shared/music/music.types';
+import { Accidental, Octave, Note, NoteName, Clef} from '../shared/music/music.types';
 
 export interface ExerciseConfig {
   allowedAccidentals: Accidental[];

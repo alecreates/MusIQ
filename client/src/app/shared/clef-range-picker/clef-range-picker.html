@@ -1,0 +1,40 @@
+<div class="border border-base-300 rounded-lg p-3">
+    <p class="font-medium text-sm mb-2">
+        {{ clef() | titlecase }} Range
+    </p>
+
+    <div class="flex items-center justify-center gap-3">
+
+        <!-- Lower note controls -->
+        <div class="flex flex-col gap-1">
+            <button type="button" class="btn btn-sm btn-square" (click)="raiseLower.emit()"
+                aria-label="Raise lower note">
+                ^
+            </button>
+
+            <button type="button" class="btn btn-sm btn-square" (click)="lowerLower.emit()"
+                aria-label="Lower lower note">
+                v
+            </button>
+        </div>
+
+        <!-- Staff -->
+        <div class="flex-1 min-w-0 flex justify-center">
+            <app-range-picker-staff [clef]="clef()" [lowerNote]="lowerNote()" [upperNote]="upperNote()" />
+        </div>
+
+        <!-- Upper note controls -->
+        <div class="flex flex-col gap-1">
+            <button type="button" class="btn btn-sm btn-square" (click)="raiseUpper.emit()"
+                aria-label="Raise upper note">
+                ^
+            </button>
+
+            <button type="button" class="btn btn-sm btn-square" (click)="lowerUpper.emit()"
+                aria-label="Lower upper note">
+                v
+            </button>
+        </div>
+
+    </div>
+</div>

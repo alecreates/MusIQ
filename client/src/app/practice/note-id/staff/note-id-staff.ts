@@ -1,9 +1,9 @@
 import {
   Component,
   ElementRef,
-  afterRenderEffect, // 1. Use the correct primitive for DOM effects
+  afterRenderEffect, 
   input,
-  viewChild // 2. Use signal-based view children
+  viewChild 
 } from '@angular/core';
 
 import {
@@ -15,7 +15,7 @@ import {
   Accidental
 } from 'vexflow';
 
-import { Note } from '../../../shared/music/music.types';
+import { Clef, Note } from '../../../shared/music/music.types';
 
 @Component({
   selector: 'app-note-id-staff',
@@ -23,32 +23,25 @@ import { Note } from '../../../shared/music/music.types';
   styleUrl: './note-id-staff.css'
 })
 export class NoteIdStaff {
-  // 1. Use viewChild signal instead of @ViewChild decorator
   private staffContainer = viewChild.required<ElementRef<HTMLDivElement>>('staffContainer');
 
-  // 2. Your input signal remains clean
   note = input.required<Note>();
+  clef = input.required<Clef>();
 
   constructor() {
-    /**
-     * 3. Replace constructor effect + afterNextRender with afterRenderEffect.
-     * This automatically waits for the initial DOM layout to finish,
-     * tracks your 'note' signal, and runs whenever it changes safely 
-     * on the browser client without needing manual initialization booleans.
-     */
     afterRenderEffect(() => {
-      // Establish our signal dependencies
       const currentNote = this.note();
+      const currentClef = this.clef();
       const container = this.staffContainer().nativeElement;
 
-      // Execute the render
-      this.renderStaff(container, currentNote);
+      this.renderStaff(container, currentNote, currentClef);
     });
   }
 
-  // 4. Pass parameters directly to keep the function pure and decoupled
-  private renderStaff(container: HTMLDivElement, noteData: Note): void {
-    // Clear previous SVG
+  private renderStaff(container: HTMLDivElement, noteData: Note, clefData: Clef): void {
+    console.log('Clef:', clefData);
+    console.log('Note:', noteData);
+
     container.innerHTML = '';
 
     const renderer = new Renderer(container, Renderer.Backends.SVG);
@@ -56,12 +49,13 @@ export class NoteIdStaff {
     const context = renderer.getContext();
 
     const stave = new Stave(50, 40, 200);
-    stave.addClef('treble').addTimeSignature('4/4');
+    stave.addClef(clefData).addTimeSignature('4/4');
     stave.setContext(context).draw();
 
     const staveNote = new StaveNote({
       keys: [`${noteData.noteName}/${noteData.octave}`],
-      duration: 'w'
+      duration: 'w',
+      clef: clefData
     });
 
     // Check if accidental exists to prevent VexFlow crashes
