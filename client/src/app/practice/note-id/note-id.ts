@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseConfig, NoteRandomizerService } from '../../services/note-generator.service';
 import { Accidental, Clef, Note, NoteName, Octave } from '../../shared/music/music.types';
 import { ClefRangePicker } from '../../shared/clef-range-picker/clef-range-picker';
-import { noteNames, notePosition } from '../../shared/music/music.helpers';
+import { noteNames, notePosition, getDisplayNoteName } from '../../shared/music/music.helpers';
 
 type RangeBoundary = 'lower' | 'upper';
 type RangeClef = 'treble' | 'bass' | 'alto' | 'tenor';
@@ -21,6 +21,12 @@ export class NoteId {
   currentNote?: Note;
   currentQuestion: number = 0;
   selectedClefs: Clef[] = [];
+  answerChoices: Note[] = [];
+
+  isCorrectAnswerSelected: boolean | null = null;
+  selectedAnswer: Note | null = null;
+
+  getDisplayNoteName = getDisplayNoteName;
 
   customizeForm = new FormGroup({
     // default selected
@@ -82,6 +88,10 @@ export class NoteId {
   }
 
   nextQuestion(): void {
+    //reset 
+    this.isCorrectAnswerSelected = null;
+    this.selectedAnswer = null;
+
     const questionCount = this.customizeForm.controls.questionCount;
 
     if (this.currentQuestion < questionCount.value) {
@@ -89,8 +99,9 @@ export class NoteId {
         Math.floor(Math.random() * this.selectedClefs.length)
       ];
 
-      this.currentQuestion += 1;
       this.currentNote = this.generateNoteForClef(this.currentClef);
+      this.generateAnswerChoices(this.currentNote);
+      this.currentQuestion++;
     }
   }
 
@@ -100,6 +111,59 @@ export class NoteId {
 
   lowerNote(clef: RangeClef, boundary: RangeBoundary): void {
     this.updateRange(clef, boundary, -1);
+  }
+
+  // Answer choice click event
+  selectAnswer(choice: Note): void {
+    this.selectedAnswer = choice;
+    this.isCorrectAnswerSelected = this.isCorrectChoice(choice);
+  }
+
+  isCorrectChoice(choice: Note): boolean {
+    return this.currentNote !== undefined
+      && choice === this.currentNote;
+  }
+
+  private generateAnswerChoices(correctNote: Note): void {
+    const allowedAccidentals = this.getAllowedAccidentals();
+
+    // Build all possible displayed notes using the allowed accidentals.
+    const candidates = noteNames.flatMap(noteName =>
+      allowedAccidentals.map(accidental =>
+        new Note(noteName, accidental, correctNote.octave)
+      )
+    );
+
+    const correctName = getDisplayNoteName(correctNote);
+
+    // Exclude the correct answer and any duplicate display names.
+    const incorrectChoices = [
+      ...new Map(
+        candidates
+          .filter(note => getDisplayNoteName(note) !== correctName)
+          .map(note => [getDisplayNoteName(note), note])
+      ).values()
+    ];
+
+    // Shuffle the incorrect choices.
+    this.shuffle(incorrectChoices);
+
+    // Take three incorrect answers and add the correct answer.
+    this.answerChoices = [
+      correctNote,
+      ...incorrectChoices.slice(0, 3)
+    ];
+
+    // Shuffle all four choices so the correct answer isn't always first.
+    this.shuffle(this.answerChoices);
+  }
+
+
+  private shuffle<T>(items: T[]): void {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
   }
 
   private generateNoteForClef(clef: RangeClef): Note {
@@ -191,7 +255,6 @@ export class NoteId {
       octave as Octave
     );
   }
-
 
   private getAllowedAccidentals():
     Accidental[] {

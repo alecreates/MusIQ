@@ -164,38 +164,39 @@
     </div>
 </form>
 } @else {
-    <div class="m-auto w-full max-w-2xl px-4">
-        <div class="card card-border border-2 bg-base-100">
-            <div class="card-body text-center">
-                @if (currentNote && currentClef) {
-                    <h2 class="text-lg font-semibold">
-                        Question {{ currentQuestion }}
-                    </h2>
-    
-                    <app-note-id-staff
-                        [note]="currentNote"
-                        [clef]="currentClef">
-                    </app-note-id-staff>
+<div class="m-auto w-full max-w-2xl px-4">
+    <div class="card card-border border-2 bg-base-100">
+        <div class="card-body text-center">
+            @if (currentNote && currentClef) {
+            <h2 class="text-lg font-semibold">
+                Question {{ currentQuestion }}
+            </h2>
+
+            <app-note-id-staff [note]="currentNote" [clef]="currentClef">
+            </app-note-id-staff>
+            }
+
+            <!-- Answer choices -->
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                @for (choice of answerChoices; track $index) {
+                <button class="btn btn-lg" 
+                    [class.bg-green-500]="selectedAnswer !== null && isCorrectChoice(choice)"
+                    [class.bg-red-500]="selectedAnswer !== null && !isCorrectChoice(choice)"
+                    [class.text-white]="selectedAnswer !== null" [disabled]="selectedAnswer !== null"
+                    (click)="selectAnswer(choice)">
+                    {{ getDisplayNoteName(choice) }}
+                </button>
                 }
-    
-                <!-- Answer choices -->
-                <div class="grid grid-cols-2 gap-3 mt-4">
-                    <button class="btn btn-outline btn-lg">A</button>
-                    <button class="btn btn-outline btn-lg">B</button>
-                    <button class="btn btn-outline btn-lg">C</button>
-                    <button class="btn btn-outline btn-lg">D</button>
-                </div>
-    
-                <!-- Next question -->
-                <div class="flex justify-end mt-4">
-                    <button
-                        class="btn btn-accent btn-sm"
-                        (click)="nextQuestion()">
-                        Next
-                    </button>
-                </div>
+            </div>
+
+            <!-- Next question -->
+            <div class="flex justify-end mt-4">
+                <button class="btn btn-accent btn-sm" (click)="nextQuestion()">
+                    Next
+                </button>
             </div>
         </div>
     </div>
+</div>
 
 }
