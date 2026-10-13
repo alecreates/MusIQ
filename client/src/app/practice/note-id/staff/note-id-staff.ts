@@ -1,9 +1,9 @@
 import {
   Component,
   ElementRef,
-  afterRenderEffect, 
+  afterRenderEffect,
   input,
-  viewChild 
+  viewChild
 } from '@angular/core';
 
 import {
@@ -39,9 +39,6 @@ export class NoteIdStaff {
   }
 
   private renderStaff(container: HTMLDivElement, noteData: Note, clefData: Clef): void {
-    console.log('Clef:', clefData);
-    console.log('Note:', noteData);
-
     container.innerHTML = '';
 
     const renderer = new Renderer(container, Renderer.Backends.SVG);
@@ -49,7 +46,7 @@ export class NoteIdStaff {
     const context = renderer.getContext();
 
     const stave = new Stave(50, 40, 200);
-    stave.addClef(clefData).addTimeSignature('4/4');
+    stave.addClef(clefData);
     stave.setContext(context).draw();
 
     const staveNote = new StaveNote({
@@ -68,7 +65,7 @@ export class NoteIdStaff {
 
     new Formatter()
       .joinVoices([voice])
-      .format([voice], stave.getNoteEndX() - stave.getNoteStartX());
+      .format([voice], 150);
 
     voice.draw(context, stave);
   }

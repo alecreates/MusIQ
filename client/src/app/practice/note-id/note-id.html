@@ -30,20 +30,6 @@
                     </select>
                 </div>
 
-                <!-- Note Range -->
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text font-medium">Note Range</span>
-                    </label>
-
-                    <select class="select select-bordered w-full cursor-pointer" formControlName="noteRange">
-                        <option value="C4-C5">C4 - C5</option>
-                        <option value="G3-C4">G3 - C4</option>
-                        <option value="C4-G5">C4 - G5</option>
-                        <option value="G3-G5">G3 - G5</option>
-                    </select>
-                </div>
-
                 <!-- Clefs -->
                 <div class="form-control">
 
@@ -109,33 +95,33 @@
                     </p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            @if (customizeForm.controls['treble'].value) {
-                            <app-clef-range-picker [clef]="'treble'" [lowerNote]="defaultRanges.treble.lower"
-                                [upperNote]="defaultRanges.treble.upper" (raiseLower)="raiseNote('treble', 'lower')"
-                                (lowerLower)="lowerNote('treble', 'lower')" (raiseUpper)="raiseNote('treble', 'upper')"
-                                (lowerUpper)="lowerNote('treble', 'upper')" />
-                            }
+                        @if (customizeForm.controls.treble.value) {
+                        <app-clef-range-picker [clef]="'treble'" [lowerNote]="customizeForm.controls.trebleLower.value"
+                            [upperNote]="customizeForm.controls.trebleUpper.value"
+                            (raiseLower)="raiseNote('treble', 'lower')" (lowerLower)="lowerNote('treble', 'lower')"
+                            (raiseUpper)="raiseNote('treble', 'upper')" (lowerUpper)="lowerNote('treble', 'upper')" />
+                        }
 
-                            @if (customizeForm.controls['bass'].value) {
-                            <app-clef-range-picker [clef]="'bass'" [lowerNote]="defaultRanges.bass.lower"
-                                [upperNote]="defaultRanges.bass.upper" (raiseLower)="raiseNote('bass', 'lower')"
-                                (lowerLower)="lowerNote('bass', 'lower')" (raiseUpper)="raiseNote('bass', 'upper')"
-                                (lowerUpper)="lowerNote('bass', 'upper')" />
-                            }
+                        @if (customizeForm.controls.bass.value) {
+                        <app-clef-range-picker [clef]="'bass'" [lowerNote]="customizeForm.controls.bassLower.value"
+                            [upperNote]="customizeForm.controls.bassUpper.value"
+                            (raiseLower)="raiseNote('bass', 'lower')" (lowerLower)="lowerNote('bass', 'lower')"
+                            (raiseUpper)="raiseNote('bass', 'upper')" (lowerUpper)="lowerNote('bass', 'upper')" />
+                        }
 
-                            @if (customizeForm.controls['alto'].value) {
-                            <app-clef-range-picker [clef]="'alto'" [lowerNote]="defaultRanges.alto.lower"
-                                [upperNote]="defaultRanges.alto.upper" (raiseLower)="raiseNote('alto', 'lower')"
-                                (lowerLower)="lowerNote('alto', 'lower')" (raiseUpper)="raiseNote('alto', 'upper')"
-                                (lowerUpper)="lowerNote('alto', 'upper')" />
-                            }
+                        @if (customizeForm.controls.alto.value) {
+                        <app-clef-range-picker [clef]="'alto'" [lowerNote]="customizeForm.controls.altoLower.value"
+                            [upperNote]="customizeForm.controls.altoUpper.value"
+                            (raiseLower)="raiseNote('alto', 'lower')" (lowerLower)="lowerNote('alto', 'lower')"
+                            (raiseUpper)="raiseNote('alto', 'upper')" (lowerUpper)="lowerNote('alto', 'upper')" />
+                        }
 
-                            @if (customizeForm.controls['tenor'].value) {
-                            <app-clef-range-picker [clef]="'tenor'" [lowerNote]="defaultRanges.tenor.lower"
-                                [upperNote]="defaultRanges.tenor.upper" (raiseLower)="raiseNote('tenor', 'lower')"
-                                (lowerLower)="lowerNote('tenor', 'lower')" (raiseUpper)="raiseNote('tenor', 'upper')"
-                                (lowerUpper)="lowerNote('tenor', 'upper')" />
-                            }
+                        @if (customizeForm.controls.tenor.value) {
+                        <app-clef-range-picker [clef]="'tenor'" [lowerNote]="customizeForm.controls.tenorLower.value"
+                            [upperNote]="customizeForm.controls.tenorUpper.value"
+                            (raiseLower)="raiseNote('tenor', 'lower')" (lowerLower)="lowerNote('tenor', 'lower')"
+                            (raiseUpper)="raiseNote('tenor', 'upper')" (lowerUpper)="lowerNote('tenor', 'upper')" />
+                        }
                     </div>
                 </div>
 
@@ -164,27 +150,52 @@
                 <div class="divider my-1"></div>
 
                 <!-- Start Button -->
-                <button class="btn btn-primary w-full">
+                <button class="btn btn-primary w-full" [disabled]="!hasSelectedClef()">
                     Start Practice!
                 </button>
+
+                @if (!hasSelectedClef()) {
+                <p class="text-sm text-error mt-2">
+                    Please select at least one clef to start practicing.
+                </p>
+                }
             </div>
         </div>
     </div>
 </form>
 } @else {
-<div class="m-auto w-full max-w-2xl px-4">
-    <div class="card card-border border-2 bg-base-100">
-        <div class="card-body">
-            @if (currentNote && currentClef) {
-            <app-note-id-staff [note]="currentNote" [clef]="currentClef">
-            </app-note-id-staff>
-            }
-
-            <button class="btn btn-accent btn-sm relative z-10" (click)="nextQuestion()">
-                Next
-            </button>
+    <div class="m-auto w-full max-w-2xl px-4">
+        <div class="card card-border border-2 bg-base-100">
+            <div class="card-body text-center">
+                @if (currentNote && currentClef) {
+                    <h2 class="text-lg font-semibold">
+                        Question {{ currentQuestion }}
+                    </h2>
+    
+                    <app-note-id-staff
+                        [note]="currentNote"
+                        [clef]="currentClef">
+                    </app-note-id-staff>
+                }
+    
+                <!-- Answer choices -->
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <button class="btn btn-outline btn-lg">A</button>
+                    <button class="btn btn-outline btn-lg">B</button>
+                    <button class="btn btn-outline btn-lg">C</button>
+                    <button class="btn btn-outline btn-lg">D</button>
+                </div>
+    
+                <!-- Next question -->
+                <div class="flex justify-end mt-4">
+                    <button
+                        class="btn btn-accent btn-sm"
+                        (click)="nextQuestion()">
+                        Next
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
 }

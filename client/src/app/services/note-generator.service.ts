@@ -1,10 +1,12 @@
 // note-generator.service.ts
 import { Injectable } from '@angular/core';
-import { Accidental, Octave, Note, NoteName, Clef} from '../shared/music/music.types';
+import { Accidental, Octave, Note } from '../shared/music/music.types';
+import { noteNames, notePosition } from '../shared/music/music.helpers';
 
 export interface ExerciseConfig {
   allowedAccidentals: Accidental[];
-  allowedOctaves: Octave[];
+  lowerNote: Note;
+  upperNote: Note;
 }
 
 @Injectable({
@@ -17,13 +19,17 @@ export class NoteRandomizerService {
   }
 
   generateRandomNote(config: ExerciseConfig): Note {
+    const lowerPosition = notePosition(config.lowerNote);
+    const upperPosition = notePosition(config.upperNote);
 
-    // 1. Get an array of all values defined in the NoteName enum
-    const noteNames = Object.values(NoteName) as NoteName[];
+    // Every diatonic note position between the boundaries is eligible.
+    const position = lowerPosition + Math.floor(
+      Math.random() * (upperPosition - lowerPosition + 1)
+    );
 
-    const noteName = this.getRandomElement(noteNames);
+    const octave = Math.floor(position / 7) as Octave;
+    const noteName = noteNames[position % 7];
     const accidental = this.getRandomElement(config.allowedAccidentals);
-    const octave = this.getRandomElement(config.allowedOctaves);
 
     return new Note(noteName, accidental, octave);
   }

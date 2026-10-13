@@ -3,11 +3,14 @@ import { NoteIdStaff } from './staff/note-id-staff';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseConfig, NoteRandomizerService } from '../../services/note-generator.service';
 import { Accidental, Clef, Note, NoteName, Octave } from '../../shared/music/music.types';
-import { RangePickerStaff } from '../../shared/range-picker-staff/range-picker-staff';
 import { ClefRangePicker } from '../../shared/clef-range-picker/clef-range-picker';
+import { noteNames, notePosition } from '../../shared/music/music.helpers';
+
+type RangeBoundary = 'lower' | 'upper';
+type RangeClef = 'treble' | 'bass' | 'alto' | 'tenor';
 
 @Component({
-  imports: [NoteIdStaff, ReactiveFormsModule, RangePickerStaff, ClefRangePicker],
+  imports: [NoteIdStaff, ReactiveFormsModule, ClefRangePicker],
   selector: 'app-note-id',
   styleUrl: './note-id.css',
   templateUrl: './note-id.html',
@@ -16,80 +19,182 @@ export class NoteId {
   isCustomize = true;
   currentClef?: Clef;
   currentNote?: Note;
-  exerciseConfig: ExerciseConfig = {
-    allowedAccidentals: [],
-    allowedOctaves: []
-  };
-  allowedClefs: Clef[] = [];
+  currentQuestion: number = 0;
+  selectedClefs: Clef[] = [];
 
   customizeForm = new FormGroup({
+    // default selected
     treble: new FormControl(true),
-    bass: new FormControl(false),
+    bass: new FormControl(true),
     alto: new FormControl(false),
     tenor: new FormControl(false),
+
+    // Note ranges (starting with defaults)
+    trebleLower: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 4),
+      { nonNullable: true }
+    ),
+    trebleUpper: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 5),
+      { nonNullable: true }
+    ),
+
+    bassLower: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 2),
+      { nonNullable: true }
+    ),
+    bassUpper: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 3),
+      { nonNullable: true }
+    ),
+
+    altoLower: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 4),
+      { nonNullable: true }
+    ),
+    altoUpper: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 5),
+      { nonNullable: true }
+    ),
+
+    tenorLower: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 3),
+      { nonNullable: true }
+    ),
+    tenorUpper: new FormControl(
+      new Note(NoteName.C, Accidental.Natural, 4),
+      { nonNullable: true }
+    ),
+
     accidentals: new FormControl<'both' | 'flats' | 'sharps' | 'none'>('both'),
-    noteRange: new FormControl<'C4-C5' | 'G3-C4' | 'C4-G5' | 'G3-G5'>('C4-C5'),
-    questionCount: new FormControl<number | null>(20),
+    questionCount: new FormControl<number>(20, { nonNullable: true }),
     unlimited: new FormControl(false)
   });
-
-  readonly defaultRanges = {
-    treble: {
-      lower: new Note(NoteName.C, Accidental.Natural, 4),
-      upper: new Note(NoteName.C, Accidental.Natural, 5)
-    },
-    bass: {
-      lower: new Note(NoteName.C, Accidental.Natural, 2),
-      upper: new Note(NoteName.C, Accidental.Natural, 3)
-    },
-    alto: {
-      lower: new Note(NoteName.C, Accidental.Natural, 4),
-      upper: new Note(NoteName.C, Accidental.Natural, 5)
-    },
-    tenor: {
-      lower: new Note(NoteName.C, Accidental.Natural, 3),
-      upper: new Note(NoteName.C, Accidental.Natural, 4)
-    }
-  };
 
   constructor(private randomizerService: NoteRandomizerService) {
   }
 
-  startPractice() {
-    console.log(this.customizeForm.value);
+  startPractice(): void {
+    this.selectedClefs = this.getSelectedClefs();
 
-    this.exerciseConfig.allowedAccidentals = this.getAllowedAccidentals();
-    this.exerciseConfig.allowedOctaves = [4, 5] as Octave[]
-
-    this.currentNote = this.randomizerService.generateRandomNote(this.exerciseConfig);
-
-    this.allowedClefs = this.getAllowedClefs();
-    this.currentClef = this.allowedClefs[Math.floor(Math.random() * this.allowedClefs.length)];
-
-    console.log(this.currentClef)
-
-    console.log('Generated Random Note:', this.currentNote);
-
+    this.nextQuestion();
     this.isCustomize = false;
   }
 
-  nextQuestion() {
-    this.currentNote = this.randomizerService.generateRandomNote(this.exerciseConfig);
-    console.log(this.currentNote)
-    this.currentClef = this.allowedClefs[Math.floor(Math.random() * this.allowedClefs.length)];
+  nextQuestion(): void {
+    const questionCount = this.customizeForm.controls.questionCount;
+
+    if (this.currentQuestion < questionCount.value) {
+      this.currentClef = this.selectedClefs[
+        Math.floor(Math.random() * this.selectedClefs.length)
+      ];
+
+      this.currentQuestion += 1;
+      this.currentNote = this.generateNoteForClef(this.currentClef);
+    }
   }
 
-  lowerNote(clef: string, lowerOrUpperNote: string) {
-    throw new Error('Method not implemented.');
+  raiseNote(clef: RangeClef, boundary: RangeBoundary): void {
+    this.updateRange(clef, boundary, 1);
   }
 
-  raiseNote(clef: string, lowerOrUpperNote: string) {
-    throw new Error('Method not implemented.');
+  lowerNote(clef: RangeClef, boundary: RangeBoundary): void {
+    this.updateRange(clef, boundary, -1);
   }
+
+  private generateNoteForClef(clef: RangeClef): Note {
+    const controls = this.getRangeControls(clef);
+
+    const config: ExerciseConfig = {
+      allowedAccidentals: this.getAllowedAccidentals(),
+      lowerNote: controls.lower.value,
+      upperNote: controls.upper.value
+    };
+
+    return this.randomizerService.generateRandomNote(config);
+  }
+
+  private updateRange(
+    clef: RangeClef,
+    boundary: RangeBoundary,
+    direction: 1 | -1
+  ): void {
+    const range = this.getRangeControls(clef);
+
+    const currentNote = range[boundary].value;
+    const nextNote = this.moveNote(currentNote, direction);
+
+    // Determine the proposed lower and upper notes.
+    const lower = boundary === 'lower'
+      ? nextNote
+      : range.lower.value;
+
+    const upper = boundary === 'upper'
+      ? nextNote
+      : range.upper.value;
+
+    // Don't allow the lower note to exceed the upper note.
+    if (notePosition(lower) > notePosition(upper)) {
+      return;
+    }
+
+    // Update the appropriate form control.
+    range[boundary].setValue(nextNote);
+  }
+
+  private getRangeControls(clef: RangeClef) {
+    const controls = this.customizeForm.controls;
+
+    switch (clef) {
+      case 'treble':
+        return {
+          lower: controls.trebleLower,
+          upper: controls.trebleUpper
+        };
+
+      case 'bass':
+        return {
+          lower: controls.bassLower,
+          upper: controls.bassUpper
+        };
+
+      case 'alto':
+        return {
+          lower: controls.altoLower,
+          upper: controls.altoUpper
+        };
+
+      case 'tenor':
+        return {
+          lower: controls.tenorLower,
+          upper: controls.tenorUpper
+        };
+    }
+  }
+
+  private moveNote(note: Note, direction: 1 | -1): Note {
+    const currentIndex = noteNames.indexOf(note.noteName);
+    let nextIndex = currentIndex + direction;
+    let octave = note.octave;
+
+    if (nextIndex < 0) {
+      nextIndex = noteNames.length - 1;
+      octave--;
+    } else if (nextIndex >= noteNames.length) {
+      nextIndex = 0;
+      octave++;
+    }
+
+    return new Note(
+      noteNames[nextIndex],
+      Accidental.Natural,
+      octave as Octave
+    );
+  }
+
 
   private getAllowedAccidentals():
     Accidental[] {
-    console.log(this.customizeForm.controls.accidentals.value)
     switch (this.customizeForm.controls.accidentals.value) {
 
       case 'flats':
@@ -111,7 +216,7 @@ export class NoteId {
     }
   }
 
-  private getAllowedClefs(): Clef[] {
+  private getSelectedClefs(): Clef[] {
     const clefs: Clef[] = [];
 
     if (this.customizeForm.controls.treble.value) {
@@ -131,5 +236,14 @@ export class NoteId {
     }
 
     return clefs;
+  }
+
+  hasSelectedClef(): boolean {
+    const controls = this.customizeForm.controls;
+
+    return controls.treble.value === true
+      || controls.bass.value === true
+      || controls.alto.value === true
+      || controls.tenor.value === true;
   }
 }
