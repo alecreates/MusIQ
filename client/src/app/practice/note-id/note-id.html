@@ -165,6 +165,24 @@
 </form>
 } @else {
 <div class="m-auto w-full max-w-2xl px-4">
+
+    <div class="stats stats-horizontal shadow w-full mt-4">
+        <div class="stat">
+            <div class="stat-title">Correct</div>
+            <div class="stat-value text-success">{{ correctAnswered }}</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">Incorrect</div>
+            <div class="stat-value text-error">{{ incorrectAnswered }}</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">Accuracy</div>
+            <div class="stat-value">{{ accuracy }}%</div>
+        </div>
+    </div>
+    
     <div class="card card-border border-2 bg-base-100">
         <div class="card-body text-center">
             @if (currentNote && currentClef) {
@@ -179,9 +197,9 @@
             <!-- Answer choices -->
             <div class="grid grid-cols-2 gap-3 mt-4">
                 @for (choice of answerChoices; track $index) {
-                <button class="btn btn-lg" 
-                    [class.bg-green-500]="selectedAnswer !== null && isCorrectChoice(choice)"
-                    [class.bg-red-500]="selectedAnswer !== null && !isCorrectChoice(choice)"
+                <button class="btn btn-lg border-2"
+                    [class.border-green-500]="selectedAnswer !== null && isCorrectChoice(choice)"
+                    [class.border-red-500]="selectedAnswer !== null && !isCorrectChoice(choice)"
                     [class.text-white]="selectedAnswer !== null" [disabled]="selectedAnswer !== null"
                     (click)="selectAnswer(choice)">
                     {{ getDisplayNoteName(choice) }}
@@ -191,7 +209,7 @@
 
             <!-- Next question -->
             <div class="flex justify-end mt-4">
-                <button class="btn btn-accent btn-sm" (click)="nextQuestion()">
+                <button class="btn btn-accent btn-lg" [disabled]="selectedAnswer == null" (click)="nextQuestion()">
                     Next
                 </button>
             </div>

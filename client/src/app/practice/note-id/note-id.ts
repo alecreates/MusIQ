@@ -1,13 +1,12 @@
-import { Component } from '@angular/core';
-import { NoteIdStaff } from './staff/note-id-staff';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ExerciseConfig, NoteRandomizerService } from '../../services/note-generator.service';
 import { Accidental, Clef, Note, NoteName, Octave } from '../../shared/music/music.types';
 import { ClefRangePicker } from '../../shared/clef-range-picker/clef-range-picker';
+import { Component } from '@angular/core';
+import { ExerciseConfig, NoteRandomizerService } from '../../services/note-generator.service';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { NoteIdStaff } from './staff/note-id-staff';
 import { noteNames, notePosition, getDisplayNoteName } from '../../shared/music/music.helpers';
 
 type RangeBoundary = 'lower' | 'upper';
-type RangeClef = 'treble' | 'bass' | 'alto' | 'tenor';
 
 @Component({
   imports: [NoteIdStaff, ReactiveFormsModule, ClefRangePicker],
@@ -16,15 +15,17 @@ type RangeClef = 'treble' | 'bass' | 'alto' | 'tenor';
   templateUrl: './note-id.html',
 })
 export class NoteId {
-  isCustomize = true;
+  accuracy: number = 0;
+  answerChoices: Note[] = [];
+  correctAnswered: number = 0;
   currentClef?: Clef;
   currentNote?: Note;
   currentQuestion: number = 0;
-  selectedClefs: Clef[] = [];
-  answerChoices: Note[] = [];
-
+  incorrectAnswered: number = 0;
   isCorrectAnswerSelected: boolean | null = null;
+  isCustomize = true;
   selectedAnswer: Note | null = null;
+  selectedClefs: Clef[] = [];
 
   getDisplayNoteName = getDisplayNoteName;
 
@@ -80,13 +81,28 @@ export class NoteId {
   constructor(private randomizerService: NoteRandomizerService) {
   }
 
-  startPractice(): void {
-    this.selectedClefs = this.getSelectedClefs();
+  // Used to show/hide range customizer for specified clef based on checkbox selection
+  hasSelectedClef(): boolean {
+    const controls = this.customizeForm.controls;
 
-    this.nextQuestion();
-    this.isCustomize = false;
+    return controls.treble.value === true
+      || controls.bass.value === true
+      || controls.alto.value === true
+      || controls.tenor.value === true;
   }
 
+  // Determines whether the currentNote matches the user's selection
+  isCorrectChoice(choice: Note): boolean {
+    return this.currentNote !== undefined
+      && choice === this.currentNote;
+  }
+
+  // Trigger the range customizer staff note to move down.
+  lowerNote(clef: Clef, boundary: RangeBoundary): void {
+    this.updateRange(clef, boundary, -1);
+  }
+
+  // Logic that happens when the "Next" button is hit
   nextQuestion(): void {
     //reset 
     this.isCorrectAnswerSelected = null;
@@ -105,25 +121,36 @@ export class NoteId {
     }
   }
 
-  raiseNote(clef: RangeClef, boundary: RangeBoundary): void {
+  // Trigger the range customizer staff note to move up.
+  raiseNote(clef: Clef, boundary: RangeBoundary): void {
     this.updateRange(clef, boundary, 1);
-  }
-
-  lowerNote(clef: RangeClef, boundary: RangeBoundary): void {
-    this.updateRange(clef, boundary, -1);
   }
 
   // Answer choice click event
   selectAnswer(choice: Note): void {
     this.selectedAnswer = choice;
     this.isCorrectAnswerSelected = this.isCorrectChoice(choice);
+
+    if (this.isCorrectAnswerSelected) {
+      this.correctAnswered++;
+    } else {
+      this.incorrectAnswered++;
+    }
+
+    this.updateAccuracy();
   }
 
-  isCorrectChoice(choice: Note): boolean {
-    return this.currentNote !== undefined
-      && choice === this.currentNote;
+  // Logic for starting the practice
+  startPractice(): void {
+    this.selectedClefs = this.getSelectedClefs();
+
+    this.nextQuestion();
+
+    // flag set to false so customizer is hidden
+    this.isCustomize = false;
   }
 
+  // Generates 4 answer choices, ensuring 1 is the correct option 
   private generateAnswerChoices(correctNote: Note): void {
     const allowedAccidentals = this.getAllowedAccidentals();
 
@@ -159,14 +186,8 @@ export class NoteId {
   }
 
 
-  private shuffle<T>(items: T[]): void {
-    for (let i = items.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [items[i], items[j]] = [items[j], items[i]];
-    }
-  }
-
-  private generateNoteForClef(clef: RangeClef): Note {
+  // Generates a random note for the clef, within its chosen range.
+  private generateNoteForClef(clef: Clef): Note {
     const controls = this.getRangeControls(clef);
 
     const config: ExerciseConfig = {
@@ -178,35 +199,32 @@ export class NoteId {
     return this.randomizerService.generateRandomNote(config);
   }
 
-  private updateRange(
-    clef: RangeClef,
-    boundary: RangeBoundary,
-    direction: 1 | -1
-  ): void {
-    const range = this.getRangeControls(clef);
+  // Returns an array of accidentals based on the selected option in the form.
+  private getAllowedAccidentals():
+    Accidental[] {
+    switch (this.customizeForm.controls.accidentals.value) {
 
-    const currentNote = range[boundary].value;
-    const nextNote = this.moveNote(currentNote, direction);
+      case 'flats':
+        return [Accidental.Flat, Accidental.Natural];
 
-    // Determine the proposed lower and upper notes.
-    const lower = boundary === 'lower'
-      ? nextNote
-      : range.lower.value;
+      case 'sharps':
+        return [Accidental.Sharp, Accidental.Natural];
 
-    const upper = boundary === 'upper'
-      ? nextNote
-      : range.upper.value;
+      case 'none':
+        return [];
 
-    // Don't allow the lower note to exceed the upper note.
-    if (notePosition(lower) > notePosition(upper)) {
-      return;
+      case 'both':
+      default:
+        return [
+          Accidental.Sharp,
+          Accidental.Flat,
+          Accidental.Natural
+        ];
     }
-
-    // Update the appropriate form control.
-    range[boundary].setValue(nextNote);
   }
 
-  private getRangeControls(clef: RangeClef) {
+  // Gets the current clef range controls
+  private getRangeControls(clef: Clef) {
     const controls = this.customizeForm.controls;
 
     switch (clef) {
@@ -236,49 +254,7 @@ export class NoteId {
     }
   }
 
-  private moveNote(note: Note, direction: 1 | -1): Note {
-    const currentIndex = noteNames.indexOf(note.noteName);
-    let nextIndex = currentIndex + direction;
-    let octave = note.octave;
-
-    if (nextIndex < 0) {
-      nextIndex = noteNames.length - 1;
-      octave--;
-    } else if (nextIndex >= noteNames.length) {
-      nextIndex = 0;
-      octave++;
-    }
-
-    return new Note(
-      noteNames[nextIndex],
-      Accidental.Natural,
-      octave as Octave
-    );
-  }
-
-  private getAllowedAccidentals():
-    Accidental[] {
-    switch (this.customizeForm.controls.accidentals.value) {
-
-      case 'flats':
-        return [Accidental.Flat, Accidental.Natural];
-
-      case 'sharps':
-        return [Accidental.Sharp, Accidental.Natural];
-
-      case 'none':
-        return [];
-
-      case 'both':
-      default:
-        return [
-          Accidental.Sharp,
-          Accidental.Flat,
-          Accidental.Natural
-        ];
-    }
-  }
-
+  // Gets the selected clefs from the form.
   private getSelectedClefs(): Clef[] {
     const clefs: Clef[] = [];
 
@@ -301,12 +277,70 @@ export class NoteId {
     return clefs;
   }
 
-  hasSelectedClef(): boolean {
-    const controls = this.customizeForm.controls;
+  // moves the note for the visual range customizer
+  private moveNote(note: Note, direction: 1 | -1): Note {
+    const currentIndex = noteNames.indexOf(note.noteName);
+    let nextIndex = currentIndex + direction;
+    let octave = note.octave;
 
-    return controls.treble.value === true
-      || controls.bass.value === true
-      || controls.alto.value === true
-      || controls.tenor.value === true;
+    if (nextIndex < 0) {
+      nextIndex = noteNames.length - 1;
+      octave--;
+    } else if (nextIndex >= noteNames.length) {
+      nextIndex = 0;
+      octave++;
+    }
+
+    return new Note(
+      noteNames[nextIndex],
+      Accidental.Natural,
+      octave as Octave
+    );
+  }
+
+  // Shuffle function to shuffle the answer choices
+  private shuffle<T>(items: T[]): void {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+  }
+
+  // Updates the accuracy based on correctAnswered/incorrectAnswered
+  private updateAccuracy(): void {
+    const totalAnswered = this.correctAnswered + this.incorrectAnswered;
+
+    this.accuracy = totalAnswered === 0
+      ? 0
+      : Math.round((this.correctAnswered / totalAnswered) * 100);
+  }
+
+  // Updates the range boundary for the visual range customizer.
+  private updateRange(
+    clef: Clef,
+    boundary: RangeBoundary,
+    direction: 1 | -1
+  ): void {
+    const range = this.getRangeControls(clef);
+
+    const currentNote = range[boundary].value;
+    const nextNote = this.moveNote(currentNote, direction);
+
+    // Determine the proposed lower and upper notes.
+    const lower = boundary === 'lower'
+      ? nextNote
+      : range.lower.value;
+
+    const upper = boundary === 'upper'
+      ? nextNote
+      : range.upper.value;
+
+    // Don't allow the lower note to exceed the upper note.
+    if (notePosition(lower) > notePosition(upper)) {
+      return;
+    }
+
+    // Update the appropriate form control.
+    range[boundary].setValue(nextNote);
   }
 }

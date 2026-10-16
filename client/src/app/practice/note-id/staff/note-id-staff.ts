@@ -43,6 +43,7 @@ export class NoteIdStaff {
 
     const renderer = new Renderer(container, Renderer.Backends.SVG);
     renderer.resize(300, 180);
+
     const context = renderer.getContext();
 
     const stave = new Stave(50, 40, 200);
@@ -52,20 +53,24 @@ export class NoteIdStaff {
     const staveNote = new StaveNote({
       keys: [`${noteData.noteName}/${noteData.octave}`],
       duration: 'w',
-      clef: clefData
+      clef: clefData,
+      alignCenter: true
     });
 
-    // Check if accidental exists to prevent VexFlow crashes
     if (noteData.accidental) {
       staveNote.addModifier(new Accidental(noteData.accidental), 0);
     }
 
-    const voice = new Voice({ numBeats: 4, beatValue: 4 });
+    const voice = new Voice({
+      numBeats: 4,
+      beatValue: 4
+    });
+
     voice.addTickable(staveNote);
 
     new Formatter()
       .joinVoices([voice])
-      .format([voice], 150);
+      .formatToStave([voice], stave);
 
     voice.draw(context, stave);
   }
